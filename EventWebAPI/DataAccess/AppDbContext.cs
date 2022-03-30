@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventWebAPI.DataAccess
 {
-    public class EventsContext : DbContext
+    public class AppDbContext : DbContext
     {
-        public EventsContext():base()
+        public AppDbContext():base()
         {
             Database.EnsureCreated();
 

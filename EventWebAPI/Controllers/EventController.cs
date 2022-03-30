@@ -1,7 +1,6 @@
 ﻿using EventWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using EventWebAPI.DataAccess;
-using EventWebAPI.Helpers;
 
 namespace EventWebAPI.Controllers
 {
@@ -9,73 +8,47 @@ namespace EventWebAPI.Controllers
     [Route("[controller]")]
     public class EventController : ControllerBase
     {
-        private readonly IDataAccessProvider _dataAccessProvider;
+        private readonly IDataAccessProvider dataAccessProvider;
 
         public EventController(IDataAccessProvider dataAccessProvider)
         {
-            _dataAccessProvider = dataAccessProvider;
+            this.dataAccessProvider = dataAccessProvider;
         }
 
         [HttpGet]
         [Route("GetAll")]
-        public async Task<IActionResult> GetEvents()
+        public IActionResult GetEvents()
         {
-            var events = _dataAccessProvider.GetEventRecords();
-
-            if (events is not null)
-            {
-                for (int i = 0; i < events.Count; i++)
-                {
-                    events[i].Speaker = _dataAccessProvider.GetSpeakerSingleRecord(events[i].SpeakerId);//модернизировать на async                    
-                }
-            }
-
-            return Ok(events);
-        }
-
-        [HttpGet]
-        [Route("Speakers")]
-        public async Task<IActionResult> GetSpeakers()
-        {
-            var speakers = _dataAccessProvider.GetSpeakerRecords();//модернизировать на async  
-            if (speakers is not null)
-            {
-                for (int i = 0; i < speakers.Count; i++)
-                {
-                    var speaker = _dataAccessProvider.GetSpeakerSingleRecord(speakers[i].Id);//модернизировать на async 
-                    if (speaker is not null)
-                    {
-                        speakers[i] = speaker;
-                    }
-                }
-            }
-            return Ok(speakers);
+            return Ok(dataAccessProvider.GetEvents().OrderBy(e => e.Id));
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Details(int id)
+        public IActionResult Details(int id)
         {
             if (id > 0)
             {
-                var _event = _dataAccessProvider.GetEventSingleRecord(id);//модернизировать на async 
+                var _event = dataAccessProvider.GetEvent(id);
+
                 if (_event is null)
                 {
                     return NotFound("This event does not exist.");
                 }
+
                 return Ok(_event);
             }
+
             return NotFound("Id isn't correct.");
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] Event _event)
+        public IActionResult Add(Event _event)
         {
             if (_event is null)
             {
                 return NotFound("Event is null");
             }
 
-            var eventById = _dataAccessProvider.GetEventSingleRecord(_event.Id);//модернизировать на async
+            var eventById = dataAccessProvider.GetEvent(_event.Id);
 
             if (eventById is not null)
             {
@@ -87,41 +60,41 @@ namespace EventWebAPI.Controllers
                 return NotFound("Provide a speaker.");
             }
 
-            var speakerById = _dataAccessProvider.GetSpeakerSingleRecord(_event.SpeakerId);//модернизировать на async
+            var speakerById = dataAccessProvider.GetSpeaker(_event.SpeakerId);
 
             if (speakerById is null)
             {
-                _dataAccessProvider.AddSpeakerRecord(_event.Speaker);
+                dataAccessProvider.AddSpeaker(_event.Speaker);
             }
             else if (speakerById.Name != _event.Speaker.Name)
             {
                 return NotFound("Non - correct speaker.");
             }
 
-            _dataAccessProvider.AddEventRecord(_event);
+            dataAccessProvider.AddEvent(_event);
             return Ok();
         }
 
         [HttpPut]
-        public async Task<IActionResult> Edit(Event _event)
+        public IActionResult Edit(Event _event)
         {
             if (_event is null)
             {
                 return NotFound("Event is null");
             }
 
-            var eventById = _dataAccessProvider.GetEventSingleRecord(_event.Id);//модернизировать на async
+            var eventById = dataAccessProvider.GetEvent(_event.Id);
 
             if (eventById is null)
             {
                 return NotFound("This event was not found");
             }
 
-            var speakerById = _dataAccessProvider.GetSpeakerSingleRecord(_event.SpeakerId);//модернизировать на async
+            var speakerById = dataAccessProvider.GetSpeaker(_event.SpeakerId);
 
             if (speakerById == null && _event.Speaker != null)
             {
-                _dataAccessProvider.AddSpeakerRecord(_event.Speaker);
+                dataAccessProvider.AddSpeaker(_event.Speaker);
             }
             else if (speakerById is null && _event.Speaker is null)
             {
@@ -132,26 +105,26 @@ namespace EventWebAPI.Controllers
                 && speakerById.Id != _event.Speaker.Id
                 && speakerById.Name != _event.Speaker.Name)
             {
-                _dataAccessProvider.UpdateSpeakerRecord(_event.Speaker);
+                dataAccessProvider.UpdateSpeaker(_event.Speaker);
             }
 
             eventById.Title = _event.Title;
             eventById.Description = _event.Description;
             eventById.SpeakerId = _event.SpeakerId;
-            _dataAccessProvider.UpdateEventRecord(eventById);
+            dataAccessProvider.UpdateEvent(eventById);
             return Ok();
         }
        
         [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
             if (id > 0)
             {
-                var eventById = _dataAccessProvider.GetEventSingleRecord(id);//модернизировать на async
+                var eventById = dataAccessProvider.GetEvent(id);
 
                 if (eventById is not null)
                 {
-                    _dataAccessProvider.DeleteEventRecord(id);
+                    dataAccessProvider.DeleteEvent(id);
                     return Ok();
                 }
                 else
@@ -159,6 +132,7 @@ namespace EventWebAPI.Controllers
                     return NotFound("This Event doesn't exist.");
                 }
             }
+
             return NotFound("Id isn't correct.");
         }
     }

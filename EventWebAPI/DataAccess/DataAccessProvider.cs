@@ -1,87 +1,127 @@
 ﻿using EventWebAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventWebAPI.DataAccess
 {
     public class DataAccessProvider : IDataAccessProvider
     {
-        private readonly EventsContext _context = new EventsContext();
+        private readonly AppDbContext context;
 
-        public void AddSpeakerRecord(Speaker speaker)
+        public DataAccessProvider(DbContext context)
         {
-            _context.Speakers.Add(speaker);
-            _context.SaveChanges();
+            this.context = (AppDbContext)context;
         }
 
-        public void AddEventRecord(Event _event)
+        public void AddSpeaker(Speaker speaker)
         {
-            _context.Events.Add(_event);
-            _context.SaveChanges();
+            context.Speakers.Add(speaker);
+            context.SaveChanges();
         }
 
-        public void UpdateSpeakerRecord(Speaker speaker)
+        public void AddEvent(Event _event)
         {
-            _context.Speakers.Update(speaker);
-            _context.SaveChanges();
+            context.Entry(_event).State = EntityState.Added;
+            context.SaveChanges();
         }
 
-        public void UpdateEventRecord(Event _event)
+        public void UpdateSpeaker(Speaker speaker)
         {
-            _context.Events.Update(_event);
-            _context.SaveChanges();
+            context.Speakers.Update(speaker);
+            context.SaveChanges();
         }
 
-        public void DeleteEventRecord(int id)
+        public void UpdateEvent(Event _event)
         {
-            var _event = _context.Events.FirstOrDefault(t => t.Id == id);
+            context.Events.Update(_event);
+            context.SaveChanges();
+        }
+
+        public void DeleteEvent(int id)
+        {
+            var _event = context.Events.FirstOrDefault(t => t.Id == id);
             if (_event is not null)
             {
-                _context.Events.Remove(_event);
-                _context.SaveChanges();
+                context.Events.Remove(_event);
+                context.SaveChanges();
             }            
         }
 
-        public Event? GetEventSingleRecord(int id)
+        public Event? GetEvent(int id)
         {
-            var _event = _context.Events.FirstOrDefault(e => e.Id == id);
+            var events = context.Events.Include(s => s.Speaker).ToList();
 
-            if (_event is not null)
+            if (events is not null)
             {
-                _event.Speaker = GetSpeakerSingleRecord(_event.SpeakerId);
-            }
+                var _event = events.FirstOrDefault(e => e.Id == id);
 
-            return _event;
-        }
-
-        public Speaker? GetSpeakerSingleRecord(int id)
-        {
-            var speaker = _context.Speakers.FirstOrDefault(s => s.Id == id);
-
-            if (speaker is not null)
-            {
-                var events = _context.Events.Where(e => e.SpeakerId == speaker.Id).ToList();
-
-                if (events is not null)
+                if (_event is not null && _event.Speaker is not null)
                 {
-                    speaker.EventsId = new List<int>();
-
-                    foreach (var e in events)
-                    {
-                        speaker.EventsId.Add(e.Id);
-                    }
+                    _event.Speaker.EventsId = events.Where(e => e.SpeakerId == _event.SpeakerId).Select(e => e.Id).ToList();
                 }
+
+                return _event;
             }
 
-            return speaker;
+            return null;
         }
 
-        public List<Event> GetEventRecords()
+        public Speaker? GetSpeaker(int id)
         {
-            return _context.Events.ToList();
+            var events = context.Events.Include(s => s.Speaker);
+
+            if (events is not null)
+            {
+                var speaker = events.Select(e => e.Speaker).ToList().FirstOrDefault(s => s!=null && s.Id == id);
+
+                if (speaker is not null)
+                {
+                    speaker.EventsId = events.Where(e => e.SpeakerId == speaker.Id).Select(e => e.Id).ToList();
+                    return speaker;
+                }
+
+            }
+
+            return null;
         }
 
-        public List<Speaker> GetSpeakerRecords()
+        public List<Event> GetEvents()
         {
-            return _context.Speakers.ToList();
+            var events = context.Events.Include(s => s.Speaker).ToList();
+
+            foreach (var _event in events)
+            {
+                if (_event.Speaker is not null)
+                {
+                    _event.Speaker.EventsId = events.Where(e => e.SpeakerId == _event.SpeakerId).Select(e => e.Id).ToList();
+                }                
+            }
+
+            return events;
+        }
+
+        public List<Speaker> GetSpeakers()
+        {
+            var events = context.Events.Include(s => s.Speaker);
+
+            if (events is not null)
+            {
+                var speakers = events.Select(e => e.Speaker).ToList();
+
+                if (speakers is not null)
+                {
+                    foreach (var speaker in speakers)
+                    {
+                        if (speaker is not null)
+                        {
+                            speaker.EventsId = events.Where(e => e.SpeakerId == speaker.Id).Select(e => e.Id).ToList();
+                        }
+                    }
+
+                    return speakers;
+                }               
+            }
+
+            return new List<Speaker>();
         }
     }
 }
