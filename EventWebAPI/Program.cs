@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using EventWebAPI.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddTransient<DbContext, AppDbContext>();
+builder.Services.AddScoped<DbContext, AppDbContext>();
 builder.Services.AddTransient<IDataAccessProvider, DataAccessProvider>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
