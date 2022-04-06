@@ -40,11 +40,5 @@ namespace EventWebAPI.DataAccess
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             optionsBuilder.EnableSensitiveDataLogging(true);
         }
-
-        //public override int SaveChanges()
-        //{
-        //    ChangeTracker.DetectChanges();
-        //    return base.SaveChanges();
-        //}
     }
 }

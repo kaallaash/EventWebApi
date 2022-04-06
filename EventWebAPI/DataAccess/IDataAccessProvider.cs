@@ -6,14 +6,14 @@ namespace EventWebAPI.DataAccess
 {
     public interface IDataAccessProvider
     {
-        void AddSpeaker(CreateSpeakerModel speaker);
-        void AddEvent(CreateEventModel _event);
-        void UpdateSpeaker(SpeakerDTO speaker);
-        bool UpdateEvent(UpdateEventModel _event);
-        bool DeleteEvent(int id);
-        SpeakerDetailsModel? GetSpeaker(int id);
-        EventDetailsModel? GetEvent(int id);
-        List<EventDetailsModel> GetEvents();
-        List<SpeakerDTO> GetSpeakers();
+        Task AddSpeaker(CreateSpeakerModel speaker);
+        Task AddEvent(CreateEventModel _event);
+        Task<bool> UpdateSpeaker(SpeakerDTO speaker);
+        Task<bool> UpdateEvent(UpdateEventModel _event);
+        Task<bool> DeleteEvent(int id);
+        Task<SpeakerDetailsModel?> GetSpeaker(int id);
+        Task<EventDetailsModel?> GetEvent(int id);
+        Task<List<EventDetailsModel>> GetEvents();
+        Task<List<SpeakerDTO>> GetSpeakers();
     }
 }

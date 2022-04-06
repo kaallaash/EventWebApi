@@ -17,15 +17,15 @@ namespace EventWebAPI.Controllers
 
         [HttpGet]
         [Route("GetAll")]
-        public IActionResult GetSpeakers()
+        public async Task<IActionResult> GetSpeakers()
         {
-            return Ok(dataAccessProvider.GetSpeakers());
+            return Ok(await dataAccessProvider.GetSpeakers());
         }
 
         [HttpGet("{id}")]
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var speaker = dataAccessProvider.GetSpeaker(id);
+            var speaker = await dataAccessProvider.GetSpeaker(id);
 
             if (speaker is not null)
             {
@@ -36,9 +36,9 @@ namespace EventWebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(CreateSpeakerModel speaker)
+        public async Task<IActionResult> Add(CreateSpeakerModel speaker)
         {
-            dataAccessProvider.AddSpeaker(speaker);
+            await dataAccessProvider.AddSpeaker(speaker);
             return Ok();
         }
     }

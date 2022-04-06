@@ -19,48 +19,45 @@ namespace EventWebAPI.Controllers
 
         [HttpGet]
         [Route("GetAll")]
-        public IActionResult GetEvents()
+        public async Task<IActionResult> GetEvents()
         {
-            return Ok(dataAccessProvider.GetEvents());
+            return Ok(await dataAccessProvider.GetEvents());
         }
 
         [HttpGet("{id}")]
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id > 0)
-            {
-                var _event = dataAccessProvider.GetEvent(id);
+            var _event = await dataAccessProvider.GetEvent(id);
 
-                if (_event is not null)
-                {
-                    return Ok(_event);
-                }
+            if (_event is not null)
+            {
+                return Ok(_event);
             }
 
             return BadRequest("This event does not exist.");
         }
 
         [HttpPost]
-        public IActionResult Add(CreateEventModel _event)
+        public async Task<IActionResult> Add(CreateEventModel _event)
         {
             if (_event is null)
             {
                 return BadRequest("Event is null");
             }
 
-            dataAccessProvider.AddEvent(_event);
+            await dataAccessProvider.AddEvent(_event);
             return Ok();
         }
 
         [HttpPut]
-        public IActionResult Edit(UpdateEventModel _event)
+        public async Task<IActionResult> Edit(UpdateEventModel _event)
         {
             if (_event is null)
             {
                 return BadRequest("Event is null");
             }
 
-            if (dataAccessProvider.UpdateEvent(_event))
+            if (await dataAccessProvider.UpdateEvent(_event))
             {
                 return Ok();
             }
@@ -70,9 +67,9 @@ namespace EventWebAPI.Controllers
         }
        
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (dataAccessProvider.DeleteEvent(id))
+            if (await dataAccessProvider.DeleteEvent(id))
             {                
                 return Ok();
             }
