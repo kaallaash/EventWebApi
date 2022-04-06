@@ -1,6 +1,8 @@
-﻿using EventWebAPI.Models;
+﻿using EventWebAPI.Models.Entity;
 using Microsoft.AspNetCore.Mvc;
 using EventWebAPI.DataAccess;
+using EventWebAPI.Models.DTO.Event;
+using EventWebAPI.Models.DTO.Speaker;
 
 namespace EventWebAPI.Controllers
 {
@@ -19,7 +21,7 @@ namespace EventWebAPI.Controllers
         [Route("GetAll")]
         public IActionResult GetEvents()
         {
-            return Ok(dataAccessProvider.GetEvents().OrderBy(e => e.Id));
+            return Ok(dataAccessProvider.GetEvents());
         }
 
         [HttpGet("{id}")]
@@ -29,46 +31,21 @@ namespace EventWebAPI.Controllers
             {
                 var _event = dataAccessProvider.GetEvent(id);
 
-                if (_event is null)
+                if (_event is not null)
                 {
-                    return NotFound("This event does not exist.");
+                    return Ok(_event);
                 }
-
-                return Ok(_event);
             }
 
-            return NotFound("Id isn't correct.");
+            return BadRequest("This event does not exist.");
         }
 
         [HttpPost]
-        public IActionResult Add(Event _event)
+        public IActionResult Add(CreateEventModel _event)
         {
             if (_event is null)
             {
-                return NotFound("Event is null");
-            }
-
-            var eventById = dataAccessProvider.GetEvent(_event.Id);
-
-            if (eventById is not null)
-            {
-                return NotFound("An event with this ID already exists.");
-            }
-
-            if (_event.Speaker is null)
-            {
-                return NotFound("Provide a speaker.");
-            }
-
-            var speakerById = dataAccessProvider.GetSpeaker(_event.SpeakerId);
-
-            if (speakerById is null)
-            {
-                dataAccessProvider.AddSpeaker(_event.Speaker);
-            }
-            else if (speakerById.Name != _event.Speaker.Name)
-            {
-                return NotFound("Non - correct speaker.");
+                return BadRequest("Event is null");
             }
 
             dataAccessProvider.AddEvent(_event);
@@ -76,64 +53,31 @@ namespace EventWebAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(Event _event)
+        public IActionResult Edit(UpdateEventModel _event)
         {
             if (_event is null)
             {
-                return NotFound("Event is null");
+                return BadRequest("Event is null");
             }
 
-            var eventById = dataAccessProvider.GetEvent(_event.Id);
-
-            if (eventById is null)
+            if (dataAccessProvider.UpdateEvent(_event))
             {
-                return NotFound("This event was not found");
+                return Ok();
             }
 
-            var speakerById = dataAccessProvider.GetSpeaker(_event.SpeakerId);
-
-            if (speakerById == null && _event.Speaker != null)
-            {
-                dataAccessProvider.AddSpeaker(_event.Speaker);
-            }
-            else if (speakerById is null && _event.Speaker is null)
-            {
-                return NotFound("You need provide an existing or correct speaker.");
-            }
-            else if (speakerById is not null
-                && _event.Speaker is not null
-                && speakerById.Id != _event.Speaker.Id
-                && speakerById.Name != _event.Speaker.Name)
-            {
-                dataAccessProvider.UpdateSpeaker(_event.Speaker);
-            }
-
-            eventById.Title = _event.Title;
-            eventById.Description = _event.Description;
-            eventById.SpeakerId = _event.SpeakerId;
-            dataAccessProvider.UpdateEvent(eventById);
-            return Ok();
+            return BadRequest("This event is not valid.");
+        
         }
        
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            if (id > 0)
-            {
-                var eventById = dataAccessProvider.GetEvent(id);
-
-                if (eventById is not null)
-                {
-                    dataAccessProvider.DeleteEvent(id);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound("This Event doesn't exist.");
-                }
+            if (dataAccessProvider.DeleteEvent(id))
+            {                
+                return Ok();
             }
 
-            return NotFound("Id isn't correct.");
+            return BadRequest("This event does not exist.");
         }
     }
 }

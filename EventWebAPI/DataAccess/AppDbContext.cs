@@ -1,4 +1,4 @@
-﻿using EventWebAPI.Models;
+﻿using EventWebAPI.Models.Entity;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventWebAPI.DataAccess
@@ -7,9 +7,9 @@ namespace EventWebAPI.DataAccess
     {
         private readonly IConfiguration configuration;
         public DbSet<Event> Events { get; set; }
-        public DbSet<Speaker> Speakers { get; set; }
+        public DbSet<Speaker> Speakers { get; set; }       
 
-        public AppDbContext(IConfiguration configuration) : base()
+        public AppDbContext(IConfiguration configuration):base()
         {
             this.configuration = configuration;
             Database.EnsureCreated();
@@ -17,7 +17,7 @@ namespace EventWebAPI.DataAccess
             if (this.Speakers != null && this.Speakers.Count() == 0)
             {
                 var defaultSpeaker = new Speaker { Name = "Andrey" };
-                Speakers.Add(defaultSpeaker);
+                Speakers.Add(defaultSpeaker);                
                 SaveChanges();
             }
             if (this.Events != null && this.Events.Count() == 0)
@@ -41,10 +41,10 @@ namespace EventWebAPI.DataAccess
             optionsBuilder.EnableSensitiveDataLogging(true);
         }
 
-        public override int SaveChanges()
-        {
-            ChangeTracker.DetectChanges();
-            return base.SaveChanges();
-        }
+        //public override int SaveChanges()
+        //{
+        //    ChangeTracker.DetectChanges();
+        //    return base.SaveChanges();
+        //}
     }
 }

@@ -1,4 +1,5 @@
 ﻿using EventWebAPI.DataAccess;
+using EventWebAPI.Models.DTO.Speaker;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventWebAPI.Controllers
@@ -24,19 +25,21 @@ namespace EventWebAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult Details(int id)
         {
-            if (id > 0)
+            var speaker = dataAccessProvider.GetSpeaker(id);
+
+            if (speaker is not null)
             {
-                var speaker = dataAccessProvider.GetSpeaker(id);
-
-                if (speaker is null)
-                {
-                    return NotFound("This speaker does not exist.");
-                }
-
                 return Ok(speaker);
             }
 
-            return NotFound("Id isn't correct.");
+            return BadRequest("This speaker does not exist.");
+        }
+
+        [HttpPost]
+        public IActionResult Add(CreateSpeakerModel speaker)
+        {
+            dataAccessProvider.AddSpeaker(speaker);
+            return Ok();
         }
     }
 }
