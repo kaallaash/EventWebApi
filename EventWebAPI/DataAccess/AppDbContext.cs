@@ -13,25 +13,6 @@ namespace EventWebAPI.DataAccess
         {
             this.configuration = configuration;
             Database.EnsureCreated();
-
-            if (this.Speakers != null && this.Speakers.Count() == 0)
-            {
-                var defaultSpeaker = new Speaker { Name = "Andrey" };
-                Speakers.Add(defaultSpeaker);                
-                SaveChanges();
-            }
-            if (this.Events != null && this.Events.Count() == 0)
-            {
-                var defaultEvent = new Event
-                {
-                    Title = "Test",
-                    Description = "Some description",
-                    SpeakerId = 1,
-                    Date = new DateTime(2022, 4, 1, 10, 0, 0)
-                };
-                this.Events.Add(defaultEvent);
-                this.SaveChanges();
-            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -39,6 +20,20 @@ namespace EventWebAPI.DataAccess
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("PostgreSqlConnectionString"));
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             optionsBuilder.EnableSensitiveDataLogging(true);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Speaker>().HasData(new Speaker {Id = 1, Name = "Andrey"});
+            modelBuilder.Entity<Event>().HasData(
+                new Event
+                {
+                    Id = 1,
+                    Title = "Test",
+                    Description = "Some description",
+                    SpeakerId = 1,
+                    Date = new DateTime(2022, 4, 1, 10, 0, 0)
+                });
         }
     }
 }
