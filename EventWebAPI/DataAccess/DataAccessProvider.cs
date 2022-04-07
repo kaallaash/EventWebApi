@@ -3,25 +3,26 @@ using EventWebAPI.Models.DTO.Event;
 using EventWebAPI.Models.DTO.Speaker;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using EventWebAPI.Services;
 
 namespace EventWebAPI.DataAccess
 {
     public class DataAccessProvider : IDataAccessProvider
     {
         private readonly AppDbContext context;
+        private readonly IEventAPIMapperService mapper;
 
-        public DataAccessProvider(DbContext context)
+        public DataAccessProvider(DbContext context, IEventAPIMapperService mapper)
         {
             this.context = (AppDbContext)context;
+            this.mapper = mapper;
         }
 
         public async Task<EventDetailsModel?> GetEvent(int id)
         {
             if (id > 0)
             {
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<Event, EventDetailsModel>()
-                           .ForMember("SpeakerName", opt => opt.MapFrom(ev => ev.Speaker.Name)));
-                var mapper = new Mapper(config);
+                var mapper = this.mapper.GetEventToEventDetailsModelMapper();
                 var _event = mapper.Map<EventDetailsModel>
                     (await context.Events.Include(e => e.Speaker).FirstOrDefaultAsync(e => e.Id == id));
                 return _event;
@@ -34,9 +35,7 @@ namespace EventWebAPI.DataAccess
         {
             if (id > 0)
             {
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<Speaker, SpeakerDetailsModel>()
-                    .ForMember("EventId", opt => opt.MapFrom(s => s.Events.Select(e => e.Id).ToList())));
-                var mapper = new Mapper(config);
+                var mapper = this.mapper.GetSpeakerToSpeakerDetailsModelMapper();
                 return mapper.Map<SpeakerDetailsModel>
                     (await context.Speakers.Include(s => s.Events).FirstOrDefaultAsync(s => s.Id == id));
             }            
@@ -46,24 +45,19 @@ namespace EventWebAPI.DataAccess
 
         public async Task <List<EventDetailsModel>> GetEvents()
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Event, EventDetailsModel>()
-            .ForMember("SpeakerName", opt => opt.MapFrom(e => e.Speaker.Name)));
-            var mapper = new Mapper(config);
+            var mapper = this.mapper.GetEventToEventDetailsModelMapper();
             return mapper.Map<List<EventDetailsModel>>(await context.Events.Include(s => s.Speaker).ToListAsync());
         }
 
         public async Task<List<SpeakerDTO>> GetSpeakers()
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Speaker, SpeakerDTO>());
-            var mapper = new Mapper(config);
+            var mapper = this.mapper.GetSpeakerToSpeakerDTOMapper();
             return mapper.Map<List<SpeakerDTO>>(await context.Speakers.ToListAsync());
         }
 
         public async Task AddSpeaker(CreateSpeakerModel createSpeakerModel)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateSpeakerModel, Speaker>()
-            .ForMember("Name", opt => opt.MapFrom(csm => csm.FirstName + " " + csm.LastName)));
-            var mapper = new Mapper(config);
+            var mapper = this.mapper.GetCreateSpeakerModelToSpeakerMapper();
             var speaker = mapper.Map<Speaker>(createSpeakerModel);
             await context.Speakers.AddAsync(speaker);
             await context.SaveChangesAsync();
@@ -71,16 +65,12 @@ namespace EventWebAPI.DataAccess
 
         public async Task AddEvent(CreateEventModel createEventModel)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateEventModel, Event>());
-            var mapper = new Mapper(config);
-            var _event = mapper.Map<Event>(createEventModel);
+            var eventMapper = mapper.GetCreateEventModelToEventMapper();
+            var _event = eventMapper.Map<Event>(createEventModel);
 
             if (!await context.Speakers.AnyAsync(s => s.Id == createEventModel.SpeakerId && s.Name == createEventModel.SpeakerName))
             {
-                var speakerMapperConfig = new MapperConfiguration(cfg => cfg.CreateMap<CreateEventModel, Speaker>()
-            .ForMember("Id", opt => opt.MapFrom(e => e.SpeakerId))
-            .ForMember("Name", opt => opt.MapFrom(e => e.SpeakerName)));
-                var speakerMapper = new Mapper(speakerMapperConfig);
+                var speakerMapper = mapper.GetCreateEventModelToSpeakerMapper();
                 var speaker = speakerMapper.Map<Speaker>(createEventModel);
                 await context.Speakers.AddAsync(speaker);
             }
@@ -95,8 +85,7 @@ namespace EventWebAPI.DataAccess
 
             if (speakerById is not null)
             {
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<SpeakerDTO, Speaker>());
-                var mapper = new Mapper(config);
+                var mapper = this.mapper.GetSpeakerDTOToSpeakerMapper();
                 var speaker = mapper.Map<Speaker>(speakerDTO);
                 context.Speakers.Update(speaker);
                 await context.SaveChangesAsync();
@@ -113,9 +102,7 @@ namespace EventWebAPI.DataAccess
 
             if (eventById is not null)
             {
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<Event, UpdateEventModel>()
-          .ForMember("SpeakerName", opt => opt.MapFrom(e => e.Speaker.Name)));
-                var mapper = new Mapper(config);
+                var mapper = this.mapper.GetEventToUpdateEventModelMapper();
                 var convertEvent = mapper.Map<UpdateEventModel>(eventById);
 
                 if (convertEvent == updateEventModel
@@ -125,9 +112,8 @@ namespace EventWebAPI.DataAccess
                     return false;
                 }
 
-                var configFromUpdateToEvent = new MapperConfiguration(cfg => cfg.CreateMap<UpdateEventModel, Event>());
-                var mapperFromUpdateToEvent = new Mapper(configFromUpdateToEvent);
-                var _event = mapperFromUpdateToEvent.Map<Event>(updateEventModel);
+                mapper = this.mapper.GetEventToUpdateEventModelMapper();
+                var _event = mapper.Map<Event>(updateEventModel);
                 context.Events.Update(_event);
                 await context.SaveChangesAsync();
                 return true;
