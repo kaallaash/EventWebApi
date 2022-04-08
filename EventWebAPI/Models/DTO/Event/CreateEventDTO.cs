@@ -3,11 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EventWebAPI.Models.DTO.Event
 {
-    public class UpdateEventModel
+    public class CreateEventDTO
     {
-        [Required]
-        [MinimumValue(1, ErrorMessage = "Id must be greater than 0")]
-        public int Id { get; set; }
         [Required]
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Invalid title length")]
         public string Title { get; set; }

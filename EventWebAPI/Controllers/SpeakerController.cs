@@ -16,27 +16,27 @@ namespace EventWebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("GetAll")]
+        [Route("All")]
         public async Task<IActionResult> GetSpeakers()
         {
             return Ok(await dataAccessProvider.GetSpeakers());
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var speaker = await dataAccessProvider.GetSpeaker(id);
 
-            if (speaker is not null)
+            if (speaker is null)
             {
-                return Ok(speaker);
+                return BadRequest("This speaker does not exist.");
             }
 
-            return BadRequest("This speaker does not exist.");
+            return Ok(speaker);            
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(CreateSpeakerModel speaker)
+        public async Task<IActionResult> Add(CreateSpeakerDTO speaker)
         {
             await dataAccessProvider.AddSpeaker(speaker);
             return Ok();

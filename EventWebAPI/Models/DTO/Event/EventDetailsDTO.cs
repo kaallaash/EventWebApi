@@ -1,6 +1,6 @@
 ﻿namespace EventWebAPI.Models.DTO.Event
 {
-    public class EventDetailsModel
+    public class EventDetailsDTO
     {
         public int Id { get; set; }
         public string Title { get; set; }

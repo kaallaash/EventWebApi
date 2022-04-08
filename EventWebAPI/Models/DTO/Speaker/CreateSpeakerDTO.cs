@@ -2,7 +2,7 @@
 
 namespace EventWebAPI.Models.DTO.Speaker
 {
-    public class CreateSpeakerModel
+    public class CreateSpeakerDTO
     {
         [Required]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Invalid first name length")]

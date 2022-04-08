@@ -1,6 +1,6 @@
 ﻿namespace EventWebAPI.Models.DTO.Speaker
 {
-    public class SpeakerDetailsModel
+    public class SpeakerDetailsDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }

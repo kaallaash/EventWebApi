@@ -16,31 +16,31 @@ namespace EventWebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("GetAll")]
+        [Route("All")]
         public async Task<IActionResult> GetEvents()
         {
             return Ok(await dataAccessProvider.GetEvents());
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var _event = await dataAccessProvider.GetEvent(id);
 
-            if (_event is not null)
+            if (_event is null)
             {
-                return Ok(_event);
+                return BadRequest("This event does not exist.");
             }
 
-            return BadRequest("This event does not exist.");
+            return Ok(_event);            
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(CreateEventModel _event)
+        public async Task<IActionResult> Add(CreateEventDTO _event)
         {
             if (_event is null)
             {
-                return BadRequest("Event is null");
+                return BadRequest("This event is not valid.");
             }
 
             await dataAccessProvider.AddEvent(_event);
@@ -48,31 +48,25 @@ namespace EventWebAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Edit(UpdateEventModel _event)
+        public async Task<IActionResult> Edit(UpdateEventDTO _event)
         {
-            if (_event is null)
+            if (_event is null || !await dataAccessProvider.UpdateEvent(_event))
             {
-                return BadRequest("Event is null");
+                return BadRequest("This event is not valid.");
             }
 
-            if (await dataAccessProvider.UpdateEvent(_event))
-            {
-                return Ok();
-            }
-
-            return BadRequest("This event is not valid.");
-        
+            return Ok();
         }
        
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            if (await dataAccessProvider.DeleteEvent(id))
-            {                
-                return Ok();
+            if (!await dataAccessProvider.DeleteEvent(id))
+            {
+                return BadRequest("This event does not exist.");
             }
 
-            return BadRequest("This event does not exist.");
+            return Ok();          
         }
     }
 }
