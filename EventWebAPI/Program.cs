@@ -3,6 +3,13 @@ using EventWebAPI.DataAccess;
 using EventWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+string connection = builder.Configuration.GetConnectionString("PostgreSqlConnectionString");
+builder.Services.AddDbContext<AppDbContext>(options => {
+    options.UseNpgsql(connection);
+    AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+    options.EnableSensitiveDataLogging(true);
+});
 builder.Services.AddScoped<DbContext, AppDbContext>();
 builder.Services.AddTransient<IDataAccessProvider, DataAccessProvider>();
 builder.Services.AddSingleton<IEventAPIMapperService, EventAPIMapperService>();

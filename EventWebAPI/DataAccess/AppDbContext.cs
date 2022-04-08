@@ -5,21 +5,14 @@ namespace EventWebAPI.DataAccess
 {
     public class AppDbContext : DbContext
     {
-        private readonly IConfiguration configuration;
         public DbSet<Event> Events { get; set; }
-        public DbSet<Speaker> Speakers { get; set; }       
+        public DbSet<Speaker> Speakers { get; set; }
 
-        public AppDbContext(IConfiguration configuration):base()
+
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
         {
-            this.configuration = configuration;
             Database.EnsureCreated();
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("PostgreSqlConnectionString"));
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-            optionsBuilder.EnableSensitiveDataLogging(true);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

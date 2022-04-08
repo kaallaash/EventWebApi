@@ -2,7 +2,6 @@
 using EventWebAPI.Models.DTO.Event;
 using EventWebAPI.Models.DTO.Speaker;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
 using EventWebAPI.Services;
 
 namespace EventWebAPI.DataAccess

@@ -1,8 +1,6 @@
-﻿using EventWebAPI.Models.Entity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using EventWebAPI.DataAccess;
 using EventWebAPI.Models.DTO.Event;
-using EventWebAPI.Models.DTO.Speaker;
 
 namespace EventWebAPI.Controllers
 {

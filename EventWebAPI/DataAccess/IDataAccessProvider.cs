@@ -1,5 +1,4 @@
-﻿using EventWebAPI.Models.Entity;
-using EventWebAPI.Models.DTO.Event;
+﻿using EventWebAPI.Models.DTO.Event;
 using EventWebAPI.Models.DTO.Speaker;
 
 namespace EventWebAPI.DataAccess

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace EventWebAPI.Models.Entity
+﻿namespace EventWebAPI.Models.Entity
 {
     public class Speaker
     {
