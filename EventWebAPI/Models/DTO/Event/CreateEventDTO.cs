@@ -1,5 +1,4 @@
-﻿using EventWebAPI.Validators;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EventWebAPI.Models.DTO.Event
 {
@@ -12,7 +11,7 @@ namespace EventWebAPI.Models.DTO.Event
         [StringLength(50, MinimumLength = 3, ErrorMessage = "Invalid description length")]
         public string Description { get; set; }
         [Required]
-        [MinimumValue(1, ErrorMessage = "SpeakerId must be greater than 0")]
+        [Range(1, int.MaxValue, ErrorMessage = "SpeakerId must be greater than 0")]
         public int SpeakerId { get; set; }
         [Required]
         [StringLength(50, MinimumLength = 5, ErrorMessage = "Invalid name length")]
