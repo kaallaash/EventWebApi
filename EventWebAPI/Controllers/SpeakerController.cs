@@ -29,7 +29,7 @@ namespace EventWebAPI.Controllers
 
             if (speaker is null)
             {
-                return BadRequest("This speaker does not exist.");
+                return NotFound("This speaker does not found.");
             }
 
             return Ok(speaker);            

@@ -30,7 +30,7 @@ namespace EventWebAPI.Controllers
 
             if (_event is null)
             {
-                return BadRequest("This event does not exist.");
+                return NotFound("This event does not found.");
             }
 
             return Ok(_event);            
@@ -64,7 +64,7 @@ namespace EventWebAPI.Controllers
         {
             if (!await dataAccessProvider.DeleteEvent(id))
             {
-                return BadRequest("This event does not exist.");
+                return NotFound("This event does not found.");
             }
 
             return Ok();          
