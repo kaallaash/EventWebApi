@@ -44,7 +44,7 @@ namespace EventWebAPI.Services
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateEventDTO, Speaker>()
             .ForMember("Id", opt => opt.MapFrom(e => e.SpeakerId))
-            .ForMember("Name", opt => opt.MapFrom(e => e.SpeakerName)));
+            .ForMember("Name", opt => opt.MapFrom(e => e.SpeakerFullName)));
             return new Mapper(config);
         }
 

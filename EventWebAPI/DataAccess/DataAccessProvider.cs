@@ -67,7 +67,7 @@ namespace EventWebAPI.DataAccess
             var eventMapper = mapper.GetCreateEventDTOToEventMapper();
             var _event = eventMapper.Map<Event>(createEventModel);
 
-            if (!await context.Speakers.AnyAsync(s => s.Id == createEventModel.SpeakerId && s.Name == createEventModel.SpeakerName))
+            if (!await context.Speakers.AnyAsync(s => s.Id == createEventModel.SpeakerId && s.Name == createEventModel.SpeakerFullName))
             {
                 var speakerMapper = mapper.GetCreateEventDTOToSpeakerMapper();
                 var speaker = speakerMapper.Map<Speaker>(createEventModel);
@@ -113,7 +113,7 @@ namespace EventWebAPI.DataAccess
                 {
                     var speaker = await GetSpeaker(updateEventModel.SpeakerId);
 
-                    if (speaker != null && speaker.Name != updateEventModel.SpeakerName)
+                    if (speaker != null && speaker.Name != updateEventModel.SpeakerFullName)
                     {
                         return false;
                     }

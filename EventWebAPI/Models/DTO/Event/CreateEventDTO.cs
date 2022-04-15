@@ -14,8 +14,8 @@ namespace EventWebAPI.Models.DTO.Event
         [Range(1, int.MaxValue, ErrorMessage = "SpeakerId must be greater than 0")]
         public int SpeakerId { get; set; }
         [Required]
-        [StringLength(50, MinimumLength = 5, ErrorMessage = "Invalid name length")]
-        public string SpeakerName { get; set; }
+        [RegularExpression(@".{2,25}[ ].{2,25}", ErrorMessage = "The full name must consist of two words from 2 to 25 characters")]
+        public string SpeakerFullName { get; set; }
         [Required]
         public DateTime Date { get; set; }
     }

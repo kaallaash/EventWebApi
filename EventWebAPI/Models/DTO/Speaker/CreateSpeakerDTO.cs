@@ -5,10 +5,10 @@ namespace EventWebAPI.Models.DTO.Speaker
     public class CreateSpeakerDTO
     {
         [Required]
-        [StringLength(50, MinimumLength = 2, ErrorMessage = "Invalid first name length")]
+        [StringLength(25, MinimumLength = 2, ErrorMessage = "Invalid name length")]
         public string FirstName { get; set; }
         [Required]
-        [StringLength(50, MinimumLength = 2, ErrorMessage = "Invalid last name length")]
+        [StringLength(25, MinimumLength = 2, ErrorMessage = "Invalid last name length")]
         public string LastName { get; set; }
     }
 }
