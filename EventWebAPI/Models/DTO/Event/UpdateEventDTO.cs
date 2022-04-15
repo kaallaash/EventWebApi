@@ -21,5 +21,14 @@ namespace EventWebAPI.Models.DTO.Event
         public string SpeakerName { get; set; }
         [Required]
         public DateTime Date { get; set; }
+
+        public bool Equals(UpdateEventDTO updateEventDTO)
+        {
+            return Id == updateEventDTO.Id
+                && Title == updateEventDTO.Title
+                && Description == updateEventDTO.Description
+                && SpeakerId == updateEventDTO.SpeakerId
+                && SpeakerName == updateEventDTO.SpeakerName;
+        }
     }
 }

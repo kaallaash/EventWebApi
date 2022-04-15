@@ -4,14 +4,14 @@ namespace EventWebAPI.Services
 {
     public interface IEventAPIMapperService
     {
-        Mapper GetEventToEventDetailsModelMapper();
-        Mapper GetSpeakerToSpeakerDetailsModelMapper();
+        Mapper GetEventToEventDetailsDTOMapper();
+        Mapper GetSpeakerToSpeakerDetailsDTOMapper();
         Mapper GetSpeakerToSpeakerDTOMapper();
-        Mapper GetCreateSpeakerModelToSpeakerMapper();
-        Mapper GetCreateEventModelToEventMapper();
-        Mapper GetCreateEventModelToSpeakerMapper();
+        Mapper GetCreateSpeakerDTOToSpeakerMapper();
+        Mapper GetCreateEventDTOToEventMapper();
+        Mapper GetCreateEventDTOToSpeakerMapper();
         Mapper GetSpeakerDTOToSpeakerMapper();
-        Mapper GetEventToUpdateEventModelMapper();
-        Mapper GetUpdateEventModelToEventMapper();
+        Mapper GetEventToUpdateEventDTOMapper();
+        Mapper GetUpdateEventDTOToEventMapper();
     }
 }

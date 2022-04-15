@@ -7,14 +7,14 @@ namespace EventWebAPI.Services
 {
     public class EventAPIMapperService : IEventAPIMapperService
     {
-        public Mapper GetEventToEventDetailsModelMapper()
+        public Mapper GetEventToEventDetailsDTOMapper()
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Event, EventDetailsDTO>()
                           .ForMember("SpeakerName", opt => opt.MapFrom(ev => ev.Speaker.Name)));
             return new Mapper(config);
         }
 
-        public Mapper GetSpeakerToSpeakerDetailsModelMapper()
+        public Mapper GetSpeakerToSpeakerDetailsDTOMapper()
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Speaker, SpeakerDetailsDTO>()
                     .ForMember("EventId", opt => opt.MapFrom(s => s.Events.Select(e => e.Id).ToList())));
@@ -27,20 +27,20 @@ namespace EventWebAPI.Services
             return new Mapper(config);
         }
 
-        public Mapper GetCreateSpeakerModelToSpeakerMapper()
+        public Mapper GetCreateSpeakerDTOToSpeakerMapper()
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateSpeakerDTO, Speaker>()
              .ForMember("Name", opt => opt.MapFrom(csm => csm.FirstName + " " + csm.LastName)));
             return new Mapper(config);
         }
 
-        public Mapper GetCreateEventModelToEventMapper()
+        public Mapper GetCreateEventDTOToEventMapper()
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateEventDTO, Event>());
             return new Mapper(config);
         }
 
-        public Mapper GetCreateEventModelToSpeakerMapper()
+        public Mapper GetCreateEventDTOToSpeakerMapper()
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateEventDTO, Speaker>()
             .ForMember("Id", opt => opt.MapFrom(e => e.SpeakerId))
@@ -54,14 +54,14 @@ namespace EventWebAPI.Services
             return new Mapper(config);
         }
 
-        public Mapper GetEventToUpdateEventModelMapper()
+        public Mapper GetEventToUpdateEventDTOMapper()
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Event, UpdateEventDTO>()
           .ForMember("SpeakerName", opt => opt.MapFrom(e => e.Speaker.Name)));
             return new Mapper(config);
         }
 
-        public Mapper GetUpdateEventModelToEventMapper()
+        public Mapper GetUpdateEventDTOToEventMapper()
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<UpdateEventDTO, Event>());
             return new Mapper(config);
