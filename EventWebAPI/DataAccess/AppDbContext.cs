@@ -10,14 +10,11 @@ namespace EventWebAPI.DataAccess
 
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
-        : base(options)
-        {
-            //Database.EnsureCreated();
-        }
+        : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Speaker>().HasData(new Speaker {Id = 1, Name = "Andrey"});
+            modelBuilder.Entity<Speaker>().HasData(new Speaker {Id = 1, Name = "Andrey Kalashnikov"});
             modelBuilder.Entity<Event>().HasData(
                 new Event
                 {

@@ -48,7 +48,7 @@ namespace EventWebAPI.Migrations
             migrationBuilder.InsertData(
                 table: "Speakers",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "Andrey" });
+                values: new object[] { 1, "Andrey Kalashnikov" });
 
             migrationBuilder.InsertData(
                 table: "Events",

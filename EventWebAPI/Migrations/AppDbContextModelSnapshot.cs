@@ -81,7 +81,7 @@ namespace EventWebAPI.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Andrey"
+                            Name = "Andrey Kalashnikov"
                         });
                 });
 
