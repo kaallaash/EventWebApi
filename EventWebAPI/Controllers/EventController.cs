@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EventWebAPI.DataAccess;
 using EventWebAPI.Models.DTO.Event;
+using System.ComponentModel.DataAnnotations;
 
 namespace EventWebAPI.Controllers
 {
